@@ -1,4 +1,5 @@
 var dsnv = new DanhSachNhanVien();
+var validation = new Validation();
 
 getLocalStorage();
 
@@ -15,6 +16,94 @@ function layThongTinNV() {
   var luong = getEle("luongCB").value;
   var chucVu = getEle("chucvu").value;
   var gioLam = getEle("gioLam").value;
+
+  var isValid = true;
+
+  // số tài khoản
+  isValid &=
+    validation.kiemTraRong(
+      taiKhoan,
+      "tbTKNV",
+      "(*) vui lòng nhập số tài khoản"
+    ) &&
+    validation.kiemTraDoDaiKiTu(
+      taiKhoan,
+      "tbTKNV",
+      "(*) vui lòng nhập đủ từ 4-6 số",
+      4,
+      6
+    );
+
+  // họ tên
+  isValid &=
+    validation.kiemTraRong(tenNV, "tbTen", "(*) vui lòng nhập họ và tên") &&
+    validation.kiemTraKiTuChuoi(
+      tenNV,
+      "tbTen",
+      "(*) vui lòng nhập đúng họ tên"
+    );
+
+  // email
+  isValid &=
+    validation.kiemTraRong(email, "tbEmail", "(*) vui lòng nhập email") &&
+    validation.kiemTraEmail(
+      email,
+      "tbEmail",
+      "(*) vui lòng nhập đúng cú pháp email"
+    );
+
+  //pass
+  isValid &=
+    validation.kiemTraRong(
+      matKhau,
+      "tbMatKhau",
+      "(*) vui lòng nhập mật khẩu"
+    ) &&
+    validation.kiemTraDoDaiPass(
+      matKhau,
+      "tbMatKhau",
+      "(*) vui lòng nhập mật khẩu từ 6-10 ký tự",
+      6,
+      10
+    ) &&
+    validation.kiemTraPass(matKhau, "tbMatKhau", "(*) mật khẩu yếu");
+
+  // // ngày làm
+  // isValid &=
+  //   validation.kiemTraRong(ngayLam, "tbNgay", "(*) vui lòng nhập ngày làm") &&
+  //   validation.kiemTraNgay(ngayLam, "tbNgay", "(*) vui lòng nhập đúng ngày");
+
+  // lương cb
+  isValid &=
+    validation.kiemTraRong(luong, "tbLuongCB", "(*) vui lòng nhập số lương") &&
+    validation.kiemTraSoLuong(
+      luong,
+      "tbLuongCB",
+      "(*)Lương cơ bản 1 000 000 - 20 000 000",
+      1000000,
+      20000000
+    ) &&
+    validation.kiemTraLuong(
+      luong,
+      "tbLuongCB",
+      "(*) vui lòng nhập lương là số"
+    );
+
+  // chức vụ
+  isValid &= validation.kiemTraChucVu(
+    "chucvu",
+    "tbChucVu",
+    "(*) vui lòng chọn chức vụ của bạn"
+  );
+
+  //giờ làm
+  isValid &= validation.kiemTraRong(
+    gioLam,
+    "tbGiolam",
+    "(*) vui lòng nhập số giờ làm"
+  );
+
+  if (!isValid) return null;
 
   //tạo đối tượng nhanVien từ lớp đối tượng NhanVien
   var nhanVien = new NhanVien(
@@ -39,12 +128,15 @@ function layThongTinNV() {
 // Thêm nhân viên
 getEle("btnThemNV").addEventListener("click", function () {
   var nhanVien = layThongTinNV();
-  //thêm nhân viên
-  dsnv.themNV(nhanVien);
 
-  setLocalStorage();
+  if (nhanVien) {
+    //thêm nhân viên
+    dsnv.themNV(nhanVien);
 
-  renderTable(dsnv.arr);
+    setLocalStorage();
+
+    renderTable(dsnv.arr);
+  }
 });
 
 function renderTable(data) {
