@@ -21,11 +21,11 @@ function NhanVien(
 
   this.tinhTongLuong = function () {
     if (this.chucVu === "Sếp") {
-      this.tongLuong = parseFloat(this.luong) * 3 * parseFloat(this.gioLam);
+      this.tongLuong = parseFloat(this.luong) * 3;
     } else if (this.chucVu === "Trưởng phòng") {
-      this.tongLuong = parseFloat(this.luong) * 2 * parseFloat(this.gioLam);
+      this.tongLuong = parseFloat(this.luong) * 2;
     } else if (this.chucVu === "Nhân viên") {
-      this.tongLuong = parseFloat(this.luong) * parseFloat(this.gioLam);
+      this.tongLuong = parseFloat(this.luong);
     }
   };
 

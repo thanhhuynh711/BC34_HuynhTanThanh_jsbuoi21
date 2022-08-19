@@ -7,7 +7,7 @@ function getEle(id) {
   return document.getElementById(id);
 }
 
-function layThongTinNV() {
+function layThongTinNV(isAdd) {
   var taiKhoan = getEle("tknv").value;
   var tenNV = getEle("name").value;
   var email = getEle("email").value;
@@ -20,19 +20,27 @@ function layThongTinNV() {
   var isValid = true;
 
   // số tài khoản
-  isValid &=
-    validation.kiemTraRong(
-      taiKhoan,
-      "tbTKNV",
-      "(*) vui lòng nhập số tài khoản"
-    ) &&
-    validation.kiemTraDoDaiKiTu(
-      taiKhoan,
-      "tbTKNV",
-      "(*) vui lòng nhập đủ từ 4-6 số",
-      4,
-      6
-    );
+  if (isAdd) {
+    isValid &=
+      validation.kiemTraRong(
+        taiKhoan,
+        "tbTKNV",
+        "(*) vui lòng nhập số tài khoản"
+      ) &&
+      validation.kiemTraDoDaiKiTu(
+        taiKhoan,
+        "tbTKNV",
+        "(*) vui lòng nhập đủ từ 4-6 số",
+        4,
+        6
+      ) &&
+      validation.kiemTraMaNVTonTai(
+        taiKhoan,
+        "tbTKNV",
+        "Tài khoản đã tồn tại",
+        dsnv.arr
+      );
+  }
 
   // họ tên
   isValid &=
@@ -76,17 +84,17 @@ function layThongTinNV() {
   // lương cb
   isValid &=
     validation.kiemTraRong(luong, "tbLuongCB", "(*) vui lòng nhập số lương") &&
+    validation.kiemTraLuong(
+      luong,
+      "tbLuongCB",
+      "(*) vui lòng nhập lương là số"
+    ) &&
     validation.kiemTraSoLuong(
       luong,
       "tbLuongCB",
       "(*)Lương cơ bản 1 000 000 - 20 000 000",
       1000000,
       20000000
-    ) &&
-    validation.kiemTraLuong(
-      luong,
-      "tbLuongCB",
-      "(*) vui lòng nhập lương là số"
     );
 
   // chức vụ
@@ -97,11 +105,19 @@ function layThongTinNV() {
   );
 
   //giờ làm
-  isValid &= validation.kiemTraRong(
-    gioLam,
-    "tbGiolam",
-    "(*) vui lòng nhập số giờ làm"
-  );
+  isValid &=
+    validation.kiemTraRong(
+      gioLam,
+      "tbGiolam",
+      "(*) vui lòng nhập số giờ làm"
+    ) &&
+    validation.kiemTraSoGioLam(
+      gioLam,
+      "tbGiolam",
+      "(*)Số giờ làm trong tháng 80 - 200 giờ",
+      80,
+      200
+    );
 
   if (!isValid) return null;
 
@@ -127,7 +143,7 @@ function layThongTinNV() {
 
 // Thêm nhân viên
 getEle("btnThemNV").addEventListener("click", function () {
-  var nhanVien = layThongTinNV();
+  var nhanVien = layThongTinNV(true);
 
   if (nhanVien) {
     //thêm nhân viên
@@ -142,6 +158,10 @@ getEle("btnThemNV").addEventListener("click", function () {
 function renderTable(data) {
   var content = "";
   data.forEach(function (nv) {
+    // format vnđ
+    var format = new Intl.NumberFormat("vn-VN");
+    var tongLuongVND = format.format(nv.tongLuong) + " vnd";
+
     content += `
         <tr>
             <td>${nv.taiKhoan}</td>
@@ -149,7 +169,7 @@ function renderTable(data) {
             <td>${nv.email}</td>
             <td>${nv.ngayLam}</td>
             <td>${nv.chucVu}</td>
-            <td>${nv.tongLuong}</td>
+            <td>${tongLuongVND}</td>
             <td>${nv.xepLoai}</td>
             <td>
             <button id="showInfo" class="btn btn-success" onclick="suaNV('${nv.taiKhoan}')">Sửa</button>
@@ -164,7 +184,7 @@ function renderTable(data) {
 
 //Cập nhật nv
 getEle("btnCapNhat").addEventListener("click", function () {
-  var nhanVien = layThongTinNV();
+  var nhanVien = layThongTinNV(false);
   dsnv._capNhatNV(nhanVien);
   renderTable(dsnv.arr);
   setLocalStorage();

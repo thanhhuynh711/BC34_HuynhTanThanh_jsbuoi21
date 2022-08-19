@@ -86,7 +86,7 @@ function Validation() {
   //   };
 
   this.kiemTraSoLuong = function (value, errorId, mess, min, max) {
-    if (value.length >= min && value.length <= max) {
+    if (value >= min && value <= max) {
       getEle(errorId).style.display = "none";
       getEle(errorId).innerHTML = "";
       return true;
@@ -117,5 +117,31 @@ function Validation() {
     getEle(errorId).style.display = "block";
     getEle(errorId).innerHTML = mess;
     return false;
+  };
+
+  this.kiemTraSoGioLam = function (value, errorId, mess, min, max) {
+    if (value >= min && value <= max) {
+      getEle(errorId).style.display = "none";
+      getEle(errorId).innerHTML = "";
+      return true;
+    }
+    getEle(errorId).style.display = "block";
+    getEle(errorId).innerHTML = mess;
+    return false;
+  };
+
+  this.kiemTraMaNVTonTai = function (value, errorId, mess, list) {
+    var status = list.some(function (nv) {
+      return value === nv.taiKhoan;
+    });
+
+    if (status) {
+      getEle(errorId).style.display = "block";
+      getEle(errorId).innerHTML = mess;
+      return false;
+    }
+    getEle(errorId).style.display = "none";
+    getEle(errorId).innerHTML = "";
+    return true;
   };
 }

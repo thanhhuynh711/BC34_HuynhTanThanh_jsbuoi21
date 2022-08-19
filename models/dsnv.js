@@ -44,7 +44,7 @@ function DanhSachNhanVien() {
   this._timKienNV = function (keyword) {
     var mangTimKiem = [];
     this.arr.forEach(function (nv) {
-      var nameLowerCase = nv.tenNV.toLowerCase();
+      var nameLowerCase = nv.xepLoai.toLowerCase();
       var keywordLowerCase = keyword.toLowerCase();
       if (nameLowerCase.indexOf(keywordLowerCase) !== -1) {
         mangTimKiem.push(nv);
